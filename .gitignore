@@ -32,3 +32,6 @@ Desktop.ini
 *_PowerConsumptionResults.csv
 PowerConsumptionResults.csv
 *.zip
+
+# Installer build output
+artifacts/

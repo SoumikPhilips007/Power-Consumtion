@@ -1,0 +1,30 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="Power Consumption Calculator"
+    Manufacturer="Philips"
+    Version="1.0.0"
+    UpgradeCode="611a7f22-c6af-4465-a9a5-cf477c0d0fa1"
+    Scope="perMachine"
+    InstallerVersion="500"
+    Language="1033"
+    Compressed="yes">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Power Consumption Calculator">
+        <Component Id="MainExecutableComponent" Guid="7574f9df-c047-4d3b-b610-7ce43f7335d0">
+          <File Id="MainExecutableFile" Source="$(var.PublishDir)\TimestampCalculator.exe" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="MainFeature" Title="Power Consumption Calculator" Level="1">
+      <ComponentRef Id="MainExecutableComponent" />
+    </Feature>
+
+    <ui:WixUI xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+              Id="WixUI_Minimal" />
+  </Package>
+</Wix>

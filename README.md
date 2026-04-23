@@ -41,6 +41,23 @@ dotnet run --project TimestampCalculator.csproj
 dotnet build TimestampCalculator.csproj
 ```
 
+## Build MSI Installer
+
+The repository includes a WiX-based MSI installer project that packages a self-contained Windows x64 build so the app can be installed on machines without a preinstalled .NET runtime.
+
+```powershell
+.\scripts\Build-Msi.ps1
+```
+
+Prerequisite:
+
+- internet access for the initial NuGet restore of `WixToolset.Sdk`
+
+Expected output locations:
+
+- Published app: `artifacts\publish\win-x64\`
+- MSI package: `Installer\bin\Release\`
+
 ## What It Does
 
 - Accepts seven phase timestamps

@@ -1,0 +1,385 @@
+<Window x:Class="TimestampCalculator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Power Consumption Calculator"
+        MinWidth="780" MinHeight="560"
+        Width="900" Height="780"
+        Background="{StaticResource BackgroundBrush}"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <Style x:Key="DotStyle" TargetType="Ellipse">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Height" Value="8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+        </Style>
+
+        <Style x:Key="BrowseButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SectionHeaderBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="MinWidth" Value="80"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#D1D5DB"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ValidatedInputTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource InputTextBoxStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PathTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Tag" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top"
+                Background="{StaticResource PrimaryBrush}"
+                Padding="16,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Path Data="M3,3 H21 V21 H3 Z M9,3 V21 M3,9 H21"
+                      Stroke="White" StrokeThickness="1.8"
+                      Width="18" Height="18"
+                      VerticalAlignment="Center"
+                      Margin="0,0,10,0"/>
+                <TextBlock Text="Power Consumption Calculations"
+                           Foreground="White" FontSize="14" FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="20,16,20,20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <Border Background="{StaticResource SectionHeaderBrush}"
+                                    CornerRadius="7,7,0,0" Padding="12,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Ellipse Grid.Column="0" Style="{StaticResource DotStyle}"
+                                             Fill="{StaticResource PrimaryBrush}"/>
+                                    <TextBlock Grid.Column="1" Text="Power Start Time Inputs"
+                                               FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{StaticResource TextBrush}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="HH:MM:SS (24 Hour)"
+                                               FontSize="11" Foreground="{StaticResource MutedTextBrush}"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel Margin="12,10,12,12">
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Average Scan" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Timestamp1, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsTimestamp1Invalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 14:23:47"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Axis Enable" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Timestamp2, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsTimestamp2Invalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 14:23:47"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Ready to Scan" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Timestamp3, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsTimestamp3Invalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 14:23:47"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Amplifier Standby" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Timestamp4, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsTimestamp4Invalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 14:23:47"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="LCC Standby" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Timestamp5, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsTimestamp5Invalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 14:23:47"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Cryo Off" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Timestamp6, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsTimestamp6Invalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 14:23:47"/>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Cryo On" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Timestamp7, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsTimestamp7Invalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 14:23:47"/>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1"/>
+
+                    <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <Border Background="{StaticResource SectionHeaderBrush}"
+                                    CornerRadius="7,7,0,0" Padding="12,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Ellipse Grid.Column="0" Style="{StaticResource DotStyle}"
+                                             Fill="{StaticResource AccentOrangeBrush}"/>
+                                    <TextBlock Grid.Column="1" Text="Requirement Values"
+                                               FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{StaticResource TextBrush}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="kW (Kilo Watt)"
+                                               FontSize="11" Foreground="{StaticResource MutedTextBrush}"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel Margin="12,10,12,12">
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Average Scan *" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding ValueA, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsValueAInvalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 23.5"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Ready To Scan *" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding ValueB, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsValueBInvalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 15"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,7">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Standby *" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding ValueC, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsValueCInvalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 6.0"/>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Off Mode *" Style="{StaticResource FieldLabelStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding ValueD, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsValueDInvalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. 7.0"/>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Title *" Style="{StaticResource FieldLabelStyle}" Margin="0,79,0,0" VerticalAlignment="Top"/>
+                                    <TextBox Grid.Column="1" Text="{Binding ValueE, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding IsValueEInvalid}" Style="{StaticResource ValidatedInputTextBoxStyle}" ToolTip="e.g. Scan_01" Margin="0,72,0,-7"/>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Style="{StaticResource CardStyle}" Margin="0,12,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="12,10,12,10">
+                        <CheckBox IsChecked="{Binding IsNgAmplifier}"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,10,0"/>
+                        <TextBlock Text="GA amplifier NG2250XP"
+                                   FontSize="12" FontWeight="Medium"
+                                   Foreground="{StaticResource TextBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Margin="0,12,0,0">
+                    <StackPanel>
+                        <Border Background="{StaticResource SectionHeaderBrush}"
+                                CornerRadius="7,7,0,0" Padding="12,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Ellipse Grid.Column="0" Style="{StaticResource DotStyle}" Fill="#7C3AED"/>
+                                <TextBlock Grid.Column="1" Text="File Inputs"
+                                           FontSize="12" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextBrush}"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="Browse to select files"
+                                           FontSize="11" Foreground="{StaticResource MutedTextBrush}"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Margin="12,10,12,12">
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="90"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Power Logs .txt" Style="{StaticResource FieldLabelStyle}"/>
+                                <TextBox Grid.Column="1" Text="{Binding PowerLogPath}" Tag="{Binding IsPowerLogPathInvalid}" Style="{StaticResource PathTextBoxStyle}" ToolTip="Click Browse to select a file"/>
+                                <Button Grid.Column="3" Content="Browse..." Style="{StaticResource BrowseButtonStyle}" Command="{Binding BrowsePowerLogCommand}"/>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="90"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Devlog File .log" Style="{StaticResource FieldLabelStyle}" Margin="0,0,0,7" VerticalAlignment="Bottom"/>
+                                <TextBox Grid.Column="1" Text="{Binding DevLogPath}" Tag="{Binding IsDevLogPathInvalid}" Style="{StaticResource PathTextBoxStyle}" ToolTip="Click Browse to select a file"/>
+                                <Button Grid.Column="3" Content="Browse..." Style="{StaticResource BrowseButtonStyle}" Command="{Binding BrowseDevLogCommand}"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0,12,0,0">
+                    <Button Content="Reset"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Margin="0,0,8,0"
+                            Command="{Binding ResetCommand}"/>
+                    <Button Content="Calculate"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Command="{Binding CalculateCommand}"/>
+                </StackPanel>
+
+                <Border Margin="0,12,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="{Binding ResultBackground}">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource CardStyle}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="Background" Value="{Binding ResultBackground}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsResultVisible}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel>
+                        <Border Background="{StaticResource PrimaryLightBrush}"
+                                CornerRadius="7,7,0,0"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="0,0,0,1"
+                                Padding="12,8">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M22,12 L18,12 L15,21 L9,3 L6,12 L2,12"
+                                      Stroke="{StaticResource PrimaryBrush}"
+                                      StrokeThickness="2"
+                                      StrokeLineJoin="Round"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      Width="16" Height="16"
+                                      Stretch="Uniform"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,8,0"/>
+                                <TextBlock Text="Calculation Results"
+                                           FontSize="12" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextBrush}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Margin="12,12,12,0"
+                                Background="{StaticResource ResultBgBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1" CornerRadius="5"
+                                Padding="10,8">
+                            <Grid>
+                                <TextBlock Style="{StaticResource ResultValueStyle}"
+                                           HorizontalAlignment="Left"
+                                           Foreground="{Binding StatusBrush}"
+                                           Text="{Binding StatusMessage}"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Margin="0,12,0,0" Background="{Binding ResultBackground}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsResultVisible}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock HorizontalAlignment="Center"
+                               Foreground="{StaticResource MutedTextBrush}"
+                               FontSize="12"
+                               VerticalAlignment="Center">
+                        <Run>Fill in the fields above and press </Run>
+                        <Run FontWeight="SemiBold" Foreground="{StaticResource TextBrush}">Calculate</Run>
+                        <Run> to see results.</Run>
+                    </TextBlock>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>
